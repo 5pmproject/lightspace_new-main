@@ -1,21 +1,15 @@
 import React from 'react';
 import svgPaths from "../imports/svg-ixc5uwmuox";
 import QuantityDropdown from './QuantityDropdown';
-import IconForward from '../imports/IconForward-2013-176';
+import { ChevronRight } from 'lucide-react';
+import { 
+  CartItem, 
+  BasePageProps, 
+  BackNavigationProps 
+} from '../types';
 
-interface CartItem {
-  id: number;
-  name: string;
-  price: string;
-  priceValue: number;
-  image: string;
-  quantity: number;
-}
-
-interface BasketPageProps {
+interface BasketPageProps extends BasePageProps, BackNavigationProps {
   cartItems: CartItem[];
-  onBack: () => void;
-  onMenuClick: () => void;
   onUpdateQuantity: (productId: number, quantity: number) => void;
   onGoToCheckout?: () => void;
 }
@@ -363,7 +357,7 @@ function Footer({ onGoToCheckout }: FooterProps) {
               <p className="block leading-[24px] text-[16px]">결제하기</p>
             </div>
             <div className="size-8 relative shrink-0">
-              <IconForward />
+              <ChevronRight className="w-6 h-6 text-white" />
             </div>
           </div>
         </div>
