@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import StatusBar from './shared/StatusBar';
 import svgPaths from "../imports/svg-s5y93igtx2";
 import clsx from "clsx";
 import { Input } from './ui/input';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { 
   Product, 
   FilterOptions, 
@@ -259,7 +260,7 @@ interface ContentProps {
 
 function Content({ products, favorites, onToggleFavorite, onAddToCart, onProductClick }: ContentProps) {
   return (
-    <div className="absolute left-0 right-0 top-[400px] bottom-4 overflow-y-auto">
+    <div className="absolute left-0 right-0 top-[351px] bottom-4 overflow-y-auto">
       <div className="box-border content-stretch flex flex-col gap-4 items-start justify-start relative w-full px-6 py-3">
         {products.length === 0 ? (
           <div className="flex flex-col items-center justify-center w-full py-12">
@@ -411,6 +412,9 @@ interface FiltersProps {
 }
 
 function Filters({ filters, onFiltersChange, products }: FiltersProps) {
+  const [showStyleFilters, setShowStyleFilters] = useState(false);
+  const [showPriceFilters, setShowPriceFilters] = useState(false);
+
   // Get unique room and style options from products
   const roomOptions = [...new Set(products.map(p => p.room))].sort();
   const styleOptions = [...new Set(products.map(p => p.style))].sort();
@@ -443,40 +447,51 @@ function Filters({ filters, onFiltersChange, products }: FiltersProps) {
 
   const clearAllFilters = () => {
     onFiltersChange({ room: [], style: [], priceRange: null });
+    setShowStyleFilters(false);
+    setShowPriceFilters(false);
   };
 
   const hasActiveFilters = filters.room.length > 0 || filters.style.length > 0 || filters.priceRange;
+  
+  // 컴팩트한 높이 계산
+  const baseHeight = 70; // 기본 헤더 + 공간별 필터
+  const expandedHeight = showStyleFilters ? 35 : 0;
+  const priceHeight = showPriceFilters ? 35 : 0;
+  const totalHeight = Math.min(baseHeight + expandedHeight + priceHeight, 140);
 
   return (
-    <div className="absolute left-0 right-0 top-[201px] h-[119px] bg-[#ffffff] border-b border-neutral-200">
-      <div className="px-6 py-4 h-full overflow-y-auto">
-        <div className="flex flex-col gap-3">
+    <div 
+      className="absolute left-0 right-0 top-[201px] bg-[#ffffff] border-b border-neutral-200 transition-all duration-300"
+      style={{ height: `${totalHeight}px` }}
+    >
+      <div className="px-6 py-2 h-full overflow-y-auto">
+        <div className="flex flex-col gap-1.5">
           {/* Filter Header */}
           <div className="flex items-center justify-between">
-            <h3 className="text-[16px] font-medium text-[#1a1a1a]">필터</h3>
+            <h3 className="text-[14px] font-medium text-[#1a1a1a]">필터</h3>
             {hasActiveFilters && (
               <button
                 onClick={clearAllFilters}
-                className="text-[12px] text-[#757575] underline"
+                className="text-[11px] text-[#757575] underline"
               >
                 전체 해제
               </button>
             )}
           </div>
 
-          {/* Room Filter */}
+          {/* Room Filter - 항상 표시 */}
           <div>
-            <p className="text-[12px] text-[#757575] mb-2">공간별</p>
+            <p className="text-[11px] text-[#757575] mb-1">공간별</p>
             <div className="flex flex-wrap gap-1">
               {roomOptions.map((room) => (
                 <button
                   key={room}
                   onClick={() => toggleRoomFilter(room)}
                   className={clsx(
-                    "px-2 py-1 rounded-full text-[10px] border transition-colors",
+                    "px-2 py-1 rounded-full text-[9px] border transition-colors",
                     filters.room.includes(room)
                       ? "bg-[#1a1a1a] text-white border-[#1a1a1a]"
-                      : "bg-white text-[#1a1a1a] border-[#e1e1e1]"
+                      : "bg-white text-[#1a1a1a] border-gray-200 hover:border-gray-400"
                   )}
                 >
                   {room}
@@ -485,47 +500,88 @@ function Filters({ filters, onFiltersChange, products }: FiltersProps) {
             </div>
           </div>
 
-          {/* Style Filter */}
-          <div>
-            <p className="text-[12px] text-[#757575] mb-2">스타일별</p>
-            <div className="flex flex-wrap gap-1">
-              {styleOptions.map((style) => (
-                <button
-                  key={style}
-                  onClick={() => toggleStyleFilter(style)}
-                  className={clsx(
-                    "px-2 py-1 rounded-full text-[10px] border transition-colors",
-                    filters.style.includes(style)
-                      ? "bg-[#1a1a1a] text-white border-[#1a1a1a]"
-                      : "bg-white text-[#1a1a1a] border-[#e1e1e1]"
-                  )}
-                >
-                  {style}
-                </button>
-              ))}
-            </div>
+          {/* Expandable Filter Buttons */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowStyleFilters(!showStyleFilters)}
+              className={clsx(
+                "flex items-center gap-1 px-2 py-1 rounded-full text-[9px] border transition-colors",
+                showStyleFilters || filters.style.length > 0
+                  ? "bg-[#f5f5f5] border-gray-300"
+                  : "bg-white border-gray-200 hover:border-gray-400"
+              )}
+            >
+              <span>스타일별</span>
+              {filters.style.length > 0 && (
+                <span className="bg-[#1a1a1a] text-white text-[8px] px-1 rounded-full min-w-[14px] h-[14px] flex items-center justify-center">
+                  {filters.style.length}
+                </span>
+              )}
+              {showStyleFilters ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+            </button>
+            
+            <button
+              onClick={() => setShowPriceFilters(!showPriceFilters)}
+              className={clsx(
+                "flex items-center gap-1 px-2 py-1 rounded-full text-[9px] border transition-colors",
+                showPriceFilters || filters.priceRange
+                  ? "bg-[#f5f5f5] border-gray-300"
+                  : "bg-white border-gray-200 hover:border-gray-400"
+              )}
+            >
+              <span>가격대별</span>
+              {filters.priceRange && (
+                <span className="bg-[#1a1a1a] text-white text-[8px] px-1 rounded-full min-w-[14px] h-[14px] flex items-center justify-center">
+                  1
+                </span>
+              )}
+              {showPriceFilters ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+            </button>
           </div>
 
-          {/* Price Filter */}
-          <div>
-            <p className="text-[12px] text-[#757575] mb-2">가격대별</p>
-            <div className="flex flex-wrap gap-1">
-              {priceRanges.map((range) => (
-                <button
-                  key={range.value}
-                  onClick={() => setPriceFilter(range.value)}
-                  className={clsx(
-                    "px-2 py-1 rounded-full text-[10px] border transition-colors",
-                    filters.priceRange === range.value
-                      ? "bg-[#1a1a1a] text-white border-[#1a1a1a]"
-                      : "bg-white text-[#1a1a1a] border-[#e1e1e1]"
-                  )}
-                >
-                  {range.label}
-                </button>
-              ))}
+          {/* Style Filter - 조건부 표시 */}
+          {showStyleFilters && (
+            <div className="animate-in slide-in-from-top-2 duration-200">
+              <div className="flex flex-wrap gap-1">
+                {styleOptions.map((style) => (
+                  <button
+                    key={style}
+                    onClick={() => toggleStyleFilter(style)}
+                    className={clsx(
+                      "px-2 py-1 rounded-full text-[9px] border transition-colors",
+                      filters.style.includes(style)
+                        ? "bg-[#1a1a1a] text-white border-[#1a1a1a]"
+                        : "bg-white text-[#1a1a1a] border-gray-200 hover:border-gray-400"
+                    )}
+                  >
+                    {style}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Price Filter - 조건부 표시 */}
+          {showPriceFilters && (
+            <div className="animate-in slide-in-from-top-2 duration-200">
+              <div className="flex flex-wrap gap-1">
+                {priceRanges.map((range) => (
+                  <button
+                    key={range.value}
+                    onClick={() => setPriceFilter(range.value)}
+                    className={clsx(
+                      "px-2 py-1 rounded-full text-[9px] border transition-colors",
+                      filters.priceRange === range.value
+                        ? "bg-[#1a1a1a] text-white border-[#1a1a1a]"
+                        : "bg-white text-[#1a1a1a] border-gray-200 hover:border-gray-400"
+                    )}
+                  >
+                    {range.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -538,25 +594,25 @@ interface RoomAnalyzerBannerProps {
 
 function RoomAnalyzerBanner({ onRoomAnalyzerClick }: RoomAnalyzerBannerProps) {
   return (
-    <div className="absolute left-0 right-0 top-[320px] h-[80px] bg-gradient-to-r from-purple-50 to-blue-50 border-b border-neutral-200">
-      <div className="px-6 py-4 h-full flex items-center">
+    <div className="absolute left-0 right-0 top-[281px] h-[70px] bg-gradient-to-r from-purple-50 to-blue-50 border-b border-neutral-200">
+      <div className="px-6 py-2 h-full flex items-center">
         <button
           onClick={onRoomAnalyzerClick}
-          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg px-4 py-3 flex items-center justify-between shadow-md hover:shadow-lg transition-shadow"
+          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg px-3 py-2 flex items-center justify-between shadow-md hover:shadow-lg transition-shadow"
         >
           <div className="flex items-center">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-3">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center mr-2">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
             <div className="text-left">
-              <p className="text-sm font-medium">AI 공간 분석</p>
-              <p className="text-xs opacity-90">사진으로 맞춤 조명 추천받기</p>
+              <p className="text-xs font-medium">AI 공간 분석</p>
+              <p className="text-[10px] opacity-90">사진으로 맞춤 조명 추천받기</p>
             </div>
           </div>
           <div className="text-right">
-            <div className="bg-white/20 px-2 py-1 rounded text-xs">
+            <div className="bg-white/20 px-1.5 py-0.5 rounded text-[9px]">
               NEW
             </div>
           </div>
