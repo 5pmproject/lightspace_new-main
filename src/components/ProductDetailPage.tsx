@@ -2,34 +2,16 @@ import React, { useState } from 'react';
 import svgPaths from "../imports/svg-42raqsyfh4";
 import footerSvgPaths from "../imports/svg-ved004mhkj";
 import clsx from "clsx";
+import { 
+  Product, 
+  BasePageProps, 
+  BackNavigationProps, 
+  CartNavigationProps 
+} from '../types';
 
-interface ProductDetailPageProps {
-  product: {
-    id: number;
-    name: string;
-    price: string;
-    priceValue: number;
-    brand: string;
-    images: string[];
-    description: string;
-    location: string;
-    features: string[];
-    room: string;
-    style: string;
-    // Technical specifications
-    power: string;
-    colorTemperature: string;
-    lumens: string;
-    installationMethod: string;
-    voltage: string;
-    energyRating: string;
-    dimensions: string;
-  };
-  cartCount: number;
-  onBack: () => void;
+interface ProductDetailPageProps extends BasePageProps, BackNavigationProps, CartNavigationProps {
+  product: Product;
   onAddToCart: (quantity: number) => void;
-  onMenuClick: () => void;
-  onCartClick: () => void;
 }
 
 export default function ProductDetailPage({

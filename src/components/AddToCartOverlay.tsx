@@ -1,15 +1,10 @@
 import React from 'react';
 import { motion } from 'motion/react';
-
-interface Product {
-  id: number;
-  name: string;
-  image: string;
-}
+import { OverlayProduct } from '../types';
 
 interface AddToCartOverlayProps {
   isVisible: boolean;
-  product: Product | null;
+  product: OverlayProduct | null;
   quantity: number;
 }
 
@@ -27,6 +22,9 @@ export default function AddToCartOverlay({ isVisible, product, quantity }: AddTo
         mass: 0.8
       }}
       className="absolute bottom-0 left-0 right-0 h-[121px] z-50"
+      role="alert"
+      aria-live="polite"
+      aria-label={`${product.name} ${quantity}개가 장바구니에 추가되었습니다`}
     >
       <div className="bg-[#426b1f] relative rounded-tl-[8px] rounded-tr-[8px] size-full">
         <div className="absolute bg-[#426b1f] h-[39px] left-0 top-[82px] w-[393px]" />

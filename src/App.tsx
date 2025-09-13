@@ -14,6 +14,7 @@ import PlaceholderPage from "./components/PlaceholderPage";
 import RoomAnalyzerPage from "./components/RoomAnalyzerPage";
 import AddToCartOverlay from "./components/AddToCartOverlay";
 import Menu from "./components/Menu";
+import ErrorBoundary from "./components/ui/ErrorBoundary";
 
 import { PRODUCTS } from "./data/products";
 
@@ -153,25 +154,27 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      {/* iPhone 16 Container */}
-      <div className="w-[393px] h-[852px] bg-[#ffffff] relative overflow-hidden rounded-[40px] shadow-2xl border-8 border-black">
-        {renderCurrentView()}
+    <ErrorBoundary>
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        {/* iPhone 16 Container */}
+        <div className="w-[393px] h-[852px] bg-[#ffffff] relative overflow-hidden rounded-[40px] shadow-2xl border-8 border-black">
+          {renderCurrentView()}
 
-        {/* Add to Cart Overlay */}
-        <AddToCartOverlay
-          isVisible={state.showOverlay}
-          product={state.overlayProduct}
-          quantity={state.overlayQuantity}
-        />
+          {/* Add to Cart Overlay */}
+          <AddToCartOverlay
+            isVisible={state.showOverlay}
+            product={state.overlayProduct}
+            quantity={state.overlayQuantity}
+          />
 
-        {/* Custom Menu */}
-        <Menu
-          isOpen={state.isNavOpen}
-          onClose={() => actions.setIsNavOpen(false)}
-          onNavigate={navigation.handleMenuNavigation}
-        />
+          {/* Custom Menu */}
+          <Menu
+            isOpen={state.isNavOpen}
+            onClose={() => actions.setIsNavOpen(false)}
+            onNavigate={navigation.handleMenuNavigation}
+          />
+        </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 }

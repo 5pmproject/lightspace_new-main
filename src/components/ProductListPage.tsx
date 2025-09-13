@@ -3,53 +3,26 @@ import StatusBar from './shared/StatusBar';
 import svgPaths from "../imports/svg-s5y93igtx2";
 import clsx from "clsx";
 import { Input } from './ui/input';
+import { 
+  Product, 
+  FilterOptions, 
+  SortOption, 
+  BasePageProps, 
+  CartNavigationProps 
+} from '../types';
 
-interface Product {
-  id: number;
-  name: string;
-  price: string;
-  priceValue: number;
-  brand: string;
-  images: string[];
-  isFavorite: boolean;
-  description: string;
-  location: string;
-  features: string[];
-  room: string;
-  style: string;
-  // Technical specifications
-  power: string;
-  colorTemperature: string;
-  lumens: string;
-  installationMethod: string;
-  voltage: string;
-  energyRating: string;
-  dimensions: string;
-}
-
-interface FilterOptions {
-  room: string[];
-  style: string[];
-  priceRange: string | null;
-}
-
-type SortOption = 'default' | 'a-z' | 'price';
-
-interface ProductListPageProps {
+interface ProductListPageProps extends BasePageProps, CartNavigationProps {
   products: Product[];
   favorites: Set<number>;
   searchTerm: string;
   sortOption: SortOption;
   filters: FilterOptions;
-  cartCount: number;
   onSearchChange: (term: string) => void;
   onSortChange: (option: SortOption) => void;
   onFiltersChange: (filters: FilterOptions) => void;
   onToggleFavorite: (productId: number) => void;
   onAddToCart: (productId: number) => void;
   onProductClick: (product: Product) => void;
-  onMenuClick: () => void;
-  onCartClick: () => void;
   onRoomAnalyzerClick?: () => void;
 }
 

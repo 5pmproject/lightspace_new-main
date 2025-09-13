@@ -52,12 +52,6 @@ export interface CartItem {
   quantity: number;
 }
 
-export interface OverlayProduct {
-  id: number;
-  name: string;
-  image: string;
-}
-
 export interface CustomerInfo {
   fullName: string;
   address: string;
@@ -81,6 +75,35 @@ export interface AppState {
   showOverlay: boolean;
   overlayProduct: OverlayProduct | null;
   overlayQuantity: number;
+}
+
+// 공통 Props 타입들
+export interface BasePageProps {
+  cartCount: number;
+  onMenuClick: () => void;
+}
+
+export interface BackNavigationProps {
+  onBack: () => void;
+}
+
+export interface CartNavigationProps {
+  onCartClick: () => void;
+}
+
+// 분석 결과 타입
+export interface AnalysisResult {
+  roomType: string;
+  style: string;
+  lighting: string;
+  recommendations: number[];
+}
+
+// 오버레이 제품 타입 (간소화된 Product)
+export interface OverlayProduct {
+  id: number;
+  name: string;
+  image: string;
 }
 
 // 이벤트 핸들러 타입들

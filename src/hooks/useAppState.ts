@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { 
   Product, 
   CartItem, 
@@ -91,8 +91,8 @@ export const useAppState = () => {
     }
   }, [searchTerm, sortOption, filters]);
 
-  // 액션 함수들
-  const toggleFavorite = (productId: number) => {
+  // 액션 함수들 (메모이제이션)
+  const toggleFavorite = useCallback((productId: number) => {
     const newFavorites = new Set(favorites);
     if (newFavorites.has(productId)) {
       newFavorites.delete(productId);
@@ -100,7 +100,7 @@ export const useAppState = () => {
       newFavorites.add(productId);
     }
     setFavorites(newFavorites);
-  };
+  }, [favorites]);
 
   const showAddToCartOverlay = (product: Product, quantity = 1) => {
     setOverlayProduct({
