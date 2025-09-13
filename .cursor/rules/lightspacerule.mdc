@@ -1,0 +1,21 @@
+---
+Format Configuration
+description: A one-line explanation of the project and rules' purpose
+globs: File patterns where these rules apply (ts, tsx, js, jsx, json, md)
+alwaysApply: true: Apply these rules in all situations
+
+Core Framework Version Specification
+Like a recipe's ingredient list, we specify exact versions so Cursor can consider the characteristics of each version when generating code:
+
+React 18.3.1's Concurrent Features
+Vite 6.3.5's latest build optimizations
+TypeScript ES2020 target configuration
+
+Cursor will automatically perform the following tasks:
+
+React 18.3.1 component generation using latest patterns
+shadcn/ui components properly composed for UI construction
+TypeScript type safety assurance
+WCAG 2.1 AA standard accessibility automatically applied
+Vite 6.3.5 optimized build configuration considerations
+---
