@@ -261,23 +261,56 @@ interface ContentProps {
 function Content({ products, favorites, onToggleFavorite, onAddToCart, onProductClick }: ContentProps) {
   return (
     <div className="absolute left-0 right-0 top-[351px] bottom-4 overflow-y-auto">
-      <div className="box-border content-stretch flex flex-col gap-4 items-start justify-start relative w-full px-6 py-3">
+      <div className="px-4 py-4">
         {products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center w-full py-12">
-            <p className="text-[16px] text-gray-500 mb-2">조건에 맞는 조명이 없습니다</p>
-            <p className="text-[14px] text-gray-400">다른 필터를 시도해보세요</p>
+          <div className="flex flex-col items-center justify-center py-20 px-8">
+            <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-blue-100 rounded-3xl flex items-center justify-center mb-6">
+              <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">조건에 맞는 조명이 없습니다</h3>
+            <p className="text-sm text-gray-500 text-center">다른 필터나 검색어를 시도해보세요</p>
           </div>
         ) : (
-          products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              isFavorite={favorites.has(product.id)}
-              onToggleFavorite={() => onToggleFavorite(product.id)}
-              onAddToCart={() => onAddToCart(product.id)}
-              onClick={() => onProductClick(product)}
-            />
-          ))
+          <>
+            {/* Product Count */}
+            <div className="flex items-center justify-between mb-4 px-2">
+              <p className="text-sm text-gray-600">
+                총 <span className="font-semibold text-purple-600">{products.length}</span>개의 조명
+              </p>
+              <div className="flex items-center gap-2 text-xs text-gray-400">
+                <span>💡 전문가 추천</span>
+                <span>⚡ 빠른 배송</span>
+              </div>
+            </div>
+            
+            {/* Enhanced Product Grid */}
+            <div className="grid grid-cols-1 gap-4">
+              {products.map((product, index) => (
+                <div 
+                  key={product.id}
+                  className="animate-in slide-in-from-bottom-4 duration-300"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <ProductCard
+                    product={product}
+                    isFavorite={favorites.has(product.id)}
+                    onToggleFavorite={() => onToggleFavorite(product.id)}
+                    onAddToCart={() => onAddToCart(product.id)}
+                    onClick={() => onProductClick(product)}
+                  />
+                </div>
+              ))}
+            </div>
+            
+            {/* Load More Hint */}
+            {products.length > 5 && (
+              <div className="text-center py-6">
+                <p className="text-xs text-gray-400">더 많은 조명을 보려면 스크롤하세요 ↓</p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -294,63 +327,98 @@ interface ProductCardProps {
 
 function ProductCard({ product, isFavorite, onToggleFavorite, onAddToCart, onClick }: ProductCardProps) {
   return (
-    <div className="bg-[#ffffff] relative shadow-[0px_0px_20px_0px_rgba(0,0,0,0.1)] shrink-0 w-full rounded-[12px]">
-      <div className="box-border content-stretch flex flex-row items-start justify-start overflow-clip p-0 relative w-full">
-        {/* Product Image */}
-        <div
-          className="bg-[#ffffff] relative self-stretch shrink-0 w-[93px] cursor-pointer rounded-l-[12px]"
-          style={{
-            backgroundImage: `url('${product.images[0]}')${product.images[1] ? `, url('${product.images[1]}')` : ''}`,
-            backgroundSize: 'cover'
-          }}
-          onClick={onClick}
-        >
-          <div className="absolute border-[px_1px_0px_0px] border-[rgba(0,0,0,0.1)] border-solid inset-0 pointer-events-none" />
+    <div className="bg-white rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 cursor-pointer group relative overflow-hidden backdrop-blur-sm">
+      <div className="flex flex-row p-4 gap-4 relative">
+        {/* Enhanced Product Image */}
+        <div className="relative w-20 h-20 flex-shrink-0" onClick={onClick}>
+          <img
+            src={product.images[0]}
+            alt={product.name}
+            className="w-full h-full object-cover rounded-xl shadow-sm group-hover:scale-105 transition-transform duration-300"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+          
+          {/* Product Badge */}
+          {product.style && (
+            <div className="absolute -top-1 -left-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-md shadow-sm">
+              {product.style.split(' ')[0]}
+            </div>
+          )}
         </div>
         
-        {/* Product Info */}
-        <div className="basis-0 grow min-h-px min-w-px relative self-stretch shrink-0 cursor-pointer" onClick={onClick}>
-          <div className="flex flex-col justify-center relative size-full">
-            <div className="box-border content-stretch flex flex-col gap-1 items-start justify-center pl-4 pr-8 py-4 relative size-full">
-              <div className="relative shrink-0 w-full">
-                <div className="box-border content-stretch flex flex-col font-['Inter:Regular',_sans-serif] font-normal gap-2 items-start justify-start leading-[0] not-italic p-0 relative text-left w-full">
-                  <div className="css-w9luqw flex flex-col justify-center relative shrink-0 text-[#000000] text-[0px] w-[173px]">
-                    <p className="leading-[16px] text-[14px]">
-                      {product.name}
-                      <br />
-                      <span className="text-[#1a1a1a] font-medium">{product.price}</span>
-                    </p>
-                  </div>
-                  <div className="css-415rgs relative shrink-0 text-[#757575] text-[12px] text-nowrap">
-                    <p className="block leading-[1.6] whitespace-pre text-[12px]">{product.brand} • {product.room}</p>
-                  </div>
-                </div>
+        {/* Enhanced Product Info */}
+        <div className="flex-1 flex flex-col justify-between py-1" onClick={onClick}>
+          <div className="space-y-2">
+            {/* Product Name */}
+            <h3 className="font-semibold text-[15px] leading-[20px] text-gray-900 line-clamp-2 group-hover:text-purple-700 transition-colors">
+              {product.name}
+            </h3>
+            
+            {/* Brand and Room Info */}
+            <div className="flex flex-col space-y-1">
+              <div className="flex items-center gap-2">
+                <p className="text-[13px] leading-[16px] text-purple-600 font-semibold">{product.brand}</p>
+                <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
+                <span className="text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                  {product.room}
+                </span>
+              </div>
+              
+              {/* Technical Specs */}
+              <div className="flex items-center gap-2 text-[10px] text-gray-400">
+                <span>💡 {product.power}</span>
+                <span>🔆 {product.lumens}</span>
+                <span>⚡ {product.energyRating}</span>
               </div>
             </div>
           </div>
+          
+          {/* Price */}
+          <div className="mt-3 flex items-center justify-between">
+            <p className="font-bold text-[16px] leading-[20px] text-gray-900">
+              {product.price}
+            </p>
+            {product.priceValue < 70000 && (
+              <span className="text-[8px] bg-green-100 text-green-600 px-1.5 py-0.5 rounded-full font-bold">
+                특가
+              </span>
+            )}
+          </div>
         </div>
         
-        {/* Heart Icon */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleFavorite();
-          }}
-          className="absolute right-2 top-2 size-8"
-        >
-          <HeartIcon filled={isFavorite} />
-        </button>
-        
-        {/* Add to Cart Button */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onAddToCart();
-          }}
-          className="absolute bg-[#1a1a1a] bottom-2 right-2 rounded-lg size-8 flex items-center justify-center"
-        >
-          <PlusIcon />
-        </button>
+        {/* Premium Action Buttons */}
+        <div className="flex flex-col items-end justify-between py-1">
+          {/* Enhanced Heart Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite();
+            }}
+            className="w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm border border-gray-200 flex items-center justify-center hover:bg-white hover:scale-110 hover:border-red-200 transition-all duration-200 shadow-sm group/heart"
+          >
+            <HeartIcon filled={isFavorite} />
+          </button>
+          
+          {/* Enhanced Add to Cart Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToCart();
+            }}
+            className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 flex items-center justify-center hover:scale-110 transition-all duration-200 shadow-lg group/btn"
+          >
+            <PlusIcon />
+          </button>
+          
+          {/* Rating Display */}
+          <div className="flex items-center gap-0.5 mt-1">
+            {[...Array(5)].map((_, i) => (
+              <svg key={i} className="w-2 h-2 text-yellow-400 fill-current" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
